@@ -16,12 +16,18 @@ func TestInit(t *testing.T){
   if (game.turn != 1){
     t.Error("Expected turn to initilize to 1")
   }
+
+  if (game.Id() != "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"){
+    t.Error("Empty board should have an id of 100 0's")
+  }
 }
 
 func TestMove(t *testing.T) {
   game := Game{}
   game.Init(2)
   game.Move(0,0)
+
+
   game.Move(0,1)
   game.Move(0,2)
 
@@ -56,10 +62,10 @@ func TestOneEye(t *testing.T) {
   game.Move(0,2)
   game.Move(1,0)
   game.Move(1,2)
-  win, gs, chn := game.Move(1,1)
+  win, gs, chn, _ := game.Move(1,1)
 
-  if (len(chn) != 3){
-    t.Error("Expected len 3, got ", len(chn))
+  if (len(chn.pieces) != 3){
+    t.Error("Expected len 3, got ", len(chn.pieces))
   }
 
   if (win) {
@@ -96,9 +102,40 @@ func TestWin(t *testing.T) {
   game.Move(1,3)
   game.Move(2,4)
 
-  win, _, _ := game.Move(0,3)
+  win,_,_,_ := game.Move(0,3)
 
   if (!win) {
     t.Error("Expected a win")
+  }
+}
+
+func TestRemoveDeadPieces(t *testing.T) {
+  game := Game{}
+  game.Init(2)
+
+  game.Move(1,0)
+  game.Move(0,0)
+  game.Move(0,1)
+  game.Move(5,5)
+  game.Move(1,1)
+
+  if (game.Board(0,0) != 0){
+    t.Error("0,0 should be empty")
+  }
+}
+
+func TestCopyGame(t *testing.T) {
+  game := Game{}
+  game.Init(2)
+  game.Move(5,5)
+
+  c := game.Copy()
+
+  if (c.Turn() != game.Turn()){
+    t.Error("turn is wrong")
+  }
+
+  if (c.Board(5,5) != 1) {
+    t.Error("5,5 should be white")
   }
 }
