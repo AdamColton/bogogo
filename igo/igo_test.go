@@ -16,10 +16,6 @@ func TestInit(t *testing.T){
   if (game.turn != 1){
     t.Error("Expected turn to initilize to 1")
   }
-
-  if (game.Id() != "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"){
-    t.Error("Empty board should have an id of 100 0's")
-  }
 }
 
 func TestMove(t *testing.T) {

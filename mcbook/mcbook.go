@@ -4,6 +4,7 @@ import (
   "../igo"
   "math/rand"
   "strconv"
+  "strings"
 )
 
 type position struct {
@@ -16,30 +17,29 @@ func (self Book) get(i string)(*position) {
   p, exists := self[i]
   if (!exists) {
     p = &position{}
-    self[i] = p
   }
   return p
 }
 
 func (self Book) Move(game *igo.Game)(bool) {
-  x := rand.Intn(10)
-  y := rand.Intn(10)
-  c := game.Copy()
-  c.Move(x,y)
-  p := self.get(c.Id())
-  v := (p.wins*1000)/(p.occured+1)
+  x := 0
+  y := 0
+  v := 0
 
-  for i:=0; i<10; i++ {
-    tx := rand.Intn(10)
-    ty := rand.Intn(10)
-    c := game.Copy()
-    c.Move(x,y)
-    p := self.get(c.Id())
-    tv := (p.wins*1000 + rand.Intn(10))/(p.occured+1)
-    if (tv > v){
-      x = tx
-      y = ty
-      v = tv
+  for tx:=0; tx<10; tx++ {
+    for ty:=0; ty<10; ty++{
+      if (game.Board(tx,ty) != 0){
+        continue
+      }
+      c := game.Copy()
+      c.Move(tx,ty)
+      p := self.get(c.Id())
+      tv := (p.wins*1000 + rand.Intn(10))/(p.occured+1)
+      if (tv > v){
+        x = tx
+        y = ty
+        v = tv
+      }
     }
   }
 
@@ -54,10 +54,12 @@ func (self Book) RecordGame(game *igo.Game) {
     p := self.get(i)
     p.occured++
     p.wins++
+    self[i] = p
   }
   for _, i := range game.Moves[l] {
     p := self.get(i)
     p.occured++
+    self[i] = p
   }
 }
 
@@ -74,14 +76,32 @@ func (self Book) PlayAGame(sides int)(*igo.Game) {
   return &game
 }
 
-func (self Book) Serialize()([]byte) {
-  s := ""
+func (self Book) Serialize()(string) {
+  s := make([]string,0,len(self))
   for k,v := range self {
     if (v.occured > 0){
-      s += k + " "
-      s += strconv.Itoa(v.wins) + " "
-      s += strconv.Itoa(v.occured) + "\n"
+      s = append(s, k + strconv.Itoa(v.wins) + "/" + strconv.Itoa(v.occured))
     }
   }
-  return []byte(s)
+  return strings.Join(s, "\n")
+}
+
+func Deserialize(s string)(Book) {
+  b := Book{}
+  l := strings.Split(s, "\n")
+  cur := 0
+  for cur < (len(l)-1) {
+    k := ""
+    for i:=0; i<10; i++ {
+      k += l[cur] + "\n"
+      cur++
+    }
+    v := strings.Split(l[cur], "/")
+    p := b.get(k)
+    p.wins,_ = strconv.Atoi( v[0] )
+    p.occured,_ = strconv.Atoi( v[1] )
+    b[k] = p
+    cur++
+  }
+  return b 
 }

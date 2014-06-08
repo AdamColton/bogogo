@@ -1,5 +1,9 @@
 package igo
 
+import(
+  "strings"
+)
+
 type Game struct {
   turn, sides, winner int
   board [10][10]int
@@ -67,6 +71,8 @@ func (self *Game) Move(x, y int)(bool, []group, chain, string){
       self.winner = self.turn
     }
     self.turn = 3 - self.turn
+  } else {
+    panic("Bad Move")
   }
   return win, gs, chn, id
 }
@@ -168,20 +174,21 @@ func (self *Game) CheckForWin(x,y int)(bool, []group, chain) {
 }
 
 func (self *Game) Id()(string){
-  s := ""
+  s := make([]string,0,110)
   for x := 0; x<10; x++ {
     for y := 0; y<10; y++ {
-      v := "0"
+      v := "+"
       if (self.board[x][y] != 0){
-        v = "1"
+        v = "@"
         if (self.board[x][y] != self.turn){
-          v = "2"
+          v = "O"
         }
       }
-      s += v
+      s = append(s, v)
     }
+    s = append(s, "\n")
   }
-  return s
+  return strings.Join(s,"")
 }
 
 func (self *Game) removeDeadPieces() {
