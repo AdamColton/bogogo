@@ -24,7 +24,7 @@ func (self Book) get(i string)(*position) {
 func (self Book) Move(game *igo.Game)(bool) {
   x := 0
   y := 0
-  v := 0
+  v := -1
 
   for tx:=0; tx<10; tx++ {
     for ty:=0; ty<10; ty++{

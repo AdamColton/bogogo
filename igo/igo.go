@@ -63,7 +63,7 @@ func (self *Game) Move(x, y int)(bool, []group, chain, string){
   id := ""
   if (self.board[x][y] == 0){
     self.board[x][y] = self.turn
-    self.removeDeadPieces()
+    self.removeDeadPieces(x,y)
     id = self.Id()
     self.Moves[self.turn-1] = append(self.Moves[self.turn-1], id)
     win, gs, chn = self.CheckForWin(x,y)
@@ -191,21 +191,23 @@ func (self *Game) Id()(string){
   return strings.Join(s,"")
 }
 
-func (self *Game) removeDeadPieces() {
+func (self *Game) removeDeadPieces(x,y int) {
   proc := make(map[Coord]bool)
-  for x := 0 ; x<10 ; x++ {
-    for y := 0 ; y<10 ; y++ {
-      c := Coord{x,y}
-      if (self.board[x][y] != 0 && !proc[c]){
-        chn := self.GetChain(x,y)
-        v := 1
-        if (!chn.liberty){
-          v = 0
-        }
-        for c, _ := range chn.pieces{
-          proc[c] = true
-          self.board[c[0]][c[1]] *= v
-        }
+  dirs := [...]Coord{ {-1,0}, {1,0}, {0, -1}, {0, 1}, {0, 0}}
+  for _,dir := range dirs{
+    c := Coord{x+dir[0],y+dir[1]}
+    if (c[0]<0 || c[0]>=10 || c[1]<0 || c[1]>=10){
+      continue
+    }
+    if (self.board[c[0]][c[1]] != 0 && !proc[c]){
+      chn := self.GetChain(c[0],c[1])
+      v := 1
+      if (!chn.liberty){
+        v = 0
+      }
+      for c, _ := range chn.pieces{
+        proc[c] = true
+        self.board[c[0]][c[1]] *= v
       }
     }
   }
