@@ -64,7 +64,7 @@ var Game = {
     var y = e.layerY - e.currentTarget.offsetTop;
     x = Math.round( (x-22)/42 )
     y = Math.round( (y-22)/42 )
-    if (x<10 && y<10){
+    if (x<10 && y<10 && Game.current[11*y+x] === "+"){
       Game.move(y,x);
     }
   },
@@ -76,7 +76,10 @@ var Game = {
         for(y=0; y<10; y+=1){
           p = data[10*y+x];
           p = p.split("/");
-          p = parseInt(p[0]) / (parseInt(p[1])+1)
+          p = parseInt(p[0]) / (parseInt(p[1])+1);
+          p = (p-.4)*2;
+          if (p<0) {p=0;}
+          if (p>1) {p=1;}
           Game.ctx.beginPath();
           Game.ctx.fillStyle = "rgba(0,255,0,"+p+")";
           Game.ctx.rect(x*42,y*42,42,42);
