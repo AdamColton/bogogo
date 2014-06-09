@@ -7,8 +7,8 @@ import (
 
 func TestBookRecord(t *testing.T) {
   b := Book{}
-  b["0"] = b.get("0")
-  b.get("0").occured = 10
+  b["0"] = b.Get("0")
+  b.Get("0").occured = 10
   if (b["0"].occured != 10) {
     t.Error("expected 10")
   }
@@ -53,11 +53,11 @@ func TestWin(t *testing.T) {
   b := Book{}
   b.RecordGame(&game)
 
-  if (b.get(mv1).wins != 1 && b.get(mv1).occured != 1){
+  if (b.Get(mv1).wins != 1 && b.Get(mv1).occured != 1){
     t.Error("Expected move one to register one win")
   }
 
-  if (b.get(mv2).wins != 0 && b.get(mv2).occured != 1){
+  if (b.Get(mv2).wins != 0 && b.Get(mv2).occured != 1){
     t.Error("Expected move two to register one occurance and no wins")
   }
 }
@@ -78,7 +78,7 @@ func TestDeserialize(t *testing.T) {
   b2 := Deserialize(b.Serialize())
 
   for k,v := range b {
-    v2 := b2.get(k)
+    v2 := b2.Get(k)
     if (v.occured != v2.occured || v.wins != v2.wins){
       t.Error("Serialize/Deserialize cycle failed")
       return

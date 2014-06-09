@@ -191,6 +191,24 @@ func (self *Game) Id()(string){
   return strings.Join(s,"")
 }
 
+func (self *Game) Iid()(string){
+  s := make([]string,0,110)
+  for x := 0; x<10; x++ {
+    for y := 0; y<10; y++ {
+      v := "+"
+      if (self.board[x][y] != 0){
+        v = "O"
+        if (self.board[x][y] != self.turn){
+          v = "@"
+        }
+      }
+      s = append(s, v)
+    }
+    s = append(s, "\n")
+  }
+  return strings.Join(s,"")
+}
+
 func (self *Game) removeDeadPieces(x,y int) {
   proc := make(map[Coord]bool)
   dirs := [...]Coord{ {-1,0}, {1,0}, {0, -1}, {0, 1}, {0, 0}}
@@ -211,4 +229,22 @@ func (self *Game) removeDeadPieces(x,y int) {
       }
     }
   }
+}
+
+func FromId(s string, sides int)(*Game) {
+  g := Game{}
+  g.Init(sides)
+  l := strings.Split(s, "\n")
+  for x := 0; x<10; x++ {
+    for y := 0; y<10; y++ {
+      c := string(l[x][y])
+      if (c == "@"){
+        g.board[x][y] = 1
+      } else if (c == "O") {
+        g.board[x][y] = 2
+      }
+    }
+  }
+
+  return &g
 }

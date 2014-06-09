@@ -10,10 +10,12 @@ import (
 type position struct {
   occured, wins int
 }
+func (self *position) Occured()(int) { return self.occured }
+func (self *position) Wins()(int) { return self.wins }
 
 type Book map[string]*position
 
-func (self Book) get(i string)(*position) {
+func (self Book) Get(i string)(*position) {
   p, exists := self[i]
   if (!exists) {
     p = &position{}
@@ -33,7 +35,7 @@ func (self Book) Move(game *igo.Game)(bool) {
       }
       c := game.Copy()
       c.Move(tx,ty)
-      p := self.get(c.Id())
+      p := self.Get(c.Id())
       tv := (p.wins*1000 + rand.Intn(10))/(p.occured+1)
       if (tv > v){
         x = tx
@@ -51,13 +53,13 @@ func (self Book) RecordGame(game *igo.Game) {
   w := game.Winner() - 1
   l := 1 - w
   for _, i := range game.Moves[w] {
-    p := self.get(i)
+    p := self.Get(i)
     p.occured++
     p.wins++
     self[i] = p
   }
   for _, i := range game.Moves[l] {
-    p := self.get(i)
+    p := self.Get(i)
     p.occured++
     self[i] = p
   }
@@ -97,7 +99,7 @@ func Deserialize(s string)(Book) {
       cur++
     }
     v := strings.Split(l[cur], "/")
-    p := b.get(k)
+    p := b.Get(k)
     p.wins,_ = strconv.Atoi( v[0] )
     p.occured,_ = strconv.Atoi( v[1] )
     b[k] = p
