@@ -23,25 +23,18 @@ func main(){
 
   http.HandleFunc("/joseki", func(w http.ResponseWriter, r *http.Request) {
     g := *igo.FromId(r.FormValue("id"), 2)
-    t := r.FormValue("turn")
     o := make([]string,100)
     c := 0
-    id := ""
 
     for tx:=0; tx<10; tx++ {
       for ty:=0; ty<10; ty++{
         if (g.Board(tx,ty) != 0){
-          o[c] = "0"
+          o[c] = "0/0"
         } else {
           gc := g.Copy()
           gc.Move(tx,ty)
-          if (t == "1"){
-            id = gc.Iid()
-          } else {
-            id = gc.Id()
-          }
-          p := b.Get(id)
-          o[c] = strconv.Itoa( (1000*p.Wins())/(p.Occured()+1) )
+          p := b.Get(gc.Iid())
+          o[c] = strconv.Itoa( p.Wins()) +"/" + strconv.Itoa(p.Occured()) 
         }
         c++
       }

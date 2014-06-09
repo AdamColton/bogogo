@@ -36,7 +36,7 @@ func (self Book) Move(game *igo.Game)(bool) {
       c := game.Copy()
       c.Move(tx,ty)
       p := self.Get(c.Id())
-      tv := (p.wins*1000 + rand.Intn(10))/(p.occured+1)
+      tv := ((p.wins+ rand.Intn(10))*1000)/(p.occured+1)
       if (tv > v){
         x = tx
         y = ty
